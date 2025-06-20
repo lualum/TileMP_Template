@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MinesMP</title>
+    <link rel="stylesheet" href="./styles.css">
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+</head>
+<body>
+    <!-- LOBBY SCREEN -->
+    <div id="lobbyScreen" class="lobby-screen">
+        <div class="lobby-container">
+            <h1 class="lobby-header">🎮 Tile Battle</h1>
+            
+            <div class="lobby-content">
+                <div class="create-game-section">
+                    <h2 class="section-title">🚀 Create New Game</h2>
+                    <div class="form-group">
+                        <label for="hostUsername">Your Username</label>
+                        <input type="text" id="hostUsername" placeholder="Enter your username" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="boardSize">Board Size</label>
+                        <input type="number" id="boardSize" placeholder="50" min="20" max="150" value="50" required>
+                        <div class="size-info">Creates an NxN grid (20-150)</div>
+                    </div>
+                    <button class="btn" onclick="createGame()">🎯 Create Game</button>
+                </div>
+
+                <div class="join-game-section">
+                    <h2 class="section-title">🎲 Join Existing Game</h2>
+                    <div class="form-group">
+                        <label for="playerUsername">Your Username</label>
+                        <input type="text" id="playerUsername" placeholder="Enter your username" required>
+                    </div>
+                    <div class="games-list" id="gamesList">
+                        <div class="no-games">
+                            <p>🔍 No games available</p>
+                            <p style="font-size: 12px; margin-top: 5px;">Create a new game or wait for others to host!</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- GAME SCREEN -->
+    <div id="gameScreen" class="game-screen">
+        <div class="game-sidebar">
+            <div class="sidebar-header">
+                <div class="game-title" id="gameTitle">Tile Battle</div>
+                <div class="players-info" id="playersInfo">Waiting for players...</div>
+            </div>
+            
+            <div class="sidebar-controls">
+                <button class="control-btn danger" onclick="resignGame()">🏳️ Resign</button>
+            </div>
+
+            <div class="chat-section">
+                <div class="chat-title">💬 Game Chat</div>
+                <div class="chat-messages" id="chatMessages"></div>
+                <form class="chat-input-form" onsubmit="sendChat(event)">
+                    <input type="text" class="chat-input" id="chatInput" placeholder="Type a message..." maxlength="200">
+                    <button type="submit" class="send-btn">Send</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="board-area">
+            <div id="board" class="board"></div>
+
+            <div id="waitingOverlay" class="waiting-overlay">
+                <div class="waiting-message">⏳ Waiting for opponent...</div>
+                <div class="waiting-submessage">Share the game link or wait for someone to join!</div>
+            </div>
+        </div>
+    </div>
+
+    <script src = "./index.js"></script>
+</body>
+</html>
