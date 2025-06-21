@@ -20,7 +20,7 @@ function clampBoardSize(size) {
     return Math.max(20, Math.min(150, parseInt(size) || 50));
 }
 
-// Initialize a new board with given size
+// Initialize a new board with given size (1D array for easier indexing)
 function createBoard(size) {
     const board = [];
     for (let i = 0; i < size * size; i++) {
@@ -43,6 +43,21 @@ function createGame(roomId, hostName, boardSize) {
         lastActivity: Date.now(),
         messages: []
     };
+}
+
+// Broadcast updated game list to all clients
+function broadcastGameList() {
+    const gameList = Array.from(games.values())
+        .filter(game => game.status === 'waiting' && game.players.length < 2)
+        .map(game => ({
+            id: game.id,
+            host: game.host,
+            playerCount: game.players.length,
+            boardSize: game.boardSize,
+            created: game.created
+        }));
+    
+    io.emit('game-list', gameList);
 }
 
 io.on('connection', (socket) => {
@@ -185,6 +200,7 @@ io.on('connection', (socket) => {
     // Handle disconnect
     socket.on('disconnect', () => {
         handlePlayerLeave(socket.id, 'disconnected');
+        console.log('User disconnected:', socket.id);
     });
 
     function handlePlayerLeave(socketId, reason) {
@@ -209,7 +225,7 @@ io.on('connection', (socket) => {
                 // Delete empty game
                 games.delete(user.gameId);
             } else {
-                // Notify remaining player
+                // Notify remaining player and reset game to waiting
                 game.status = 'waiting';
                 io.to(user.gameId).emit('player-left', { 
                     game, 
@@ -224,20 +240,6 @@ io.on('connection', (socket) => {
         users.delete(socketId);
         console.log(`${user?.username || 'Unknown'} ${reason}`);
     }
-
-    function broadcastGameList() {
-        const gameList = Array.from(games.values())
-            .filter(game => game.status === 'waiting' && game.players.length < 2)
-            .map(game => ({
-                id: game.id,
-                host: game.host,
-                playerCount: game.players.length,
-                boardSize: game.boardSize,
-                created: game.created
-            }));
-        
-        io.emit('game-list', gameList);
-    }
 });
 
 // Clean up old games periodically
@@ -251,6 +253,9 @@ setInterval(() => {
             console.log(`Cleaned up inactive game: ${gameId}`);
         }
     }
+    
+    // Broadcast updated game list after cleanup
+    broadcastGameList();
 }, 5 * 60 * 1000); // Check every 5 minutes
 
 const PORT = process.env.PORT || 3000;

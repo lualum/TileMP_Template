@@ -62,13 +62,12 @@
                 <div class="chat-messages" id="chatMessages"></div>
                 <form class="chat-input-form" onsubmit="sendChat(event)">
                     <input type="text" class="chat-input" id="chatInput" placeholder="Type a message..." maxlength="200">
-                    <button type="submit" class="send-btn">Send</button>
                 </form>
             </div>
         </div>
 
         <div class="board-area">
-            <div id="board" class="board"></div>
+            <canvas id="board" class="board"></div>
 
             <div id="waitingOverlay" class="waiting-overlay">
                 <div class="waiting-message">⏳ Waiting for opponent...</div>
@@ -77,6 +76,7 @@
         </div>
     </div>
 
-    <script src = "./index.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="./index.js"></script>
 </body>
 </html>
