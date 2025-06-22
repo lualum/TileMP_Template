@@ -160,9 +160,6 @@ function createBoard(size) {
     const canvasSize = Math.min(boardCanvas.width, boardCanvas.height);
     tileSize = Math.floor(canvasSize / viewportSize);
     
-    // Set up canvas click handler
-    boardCanvas.addEventListener('click', handleCanvasClick);
-    
     // Set up keyboard controls for cursor movement
     document.addEventListener('keydown', handleKeyDown);
     
@@ -293,28 +290,6 @@ function drawBoard() {
     c.strokeRect(pixelX, pixelY, tileSize, tileSize);
 }
 
-// Handle canvas clicks
-function handleCanvasClick(event) {
-    const rect = boardCanvas.getBoundingClientRect();
-    const clickX = event.clientX - rect.left;
-    const clickY = event.clientY - rect.top;
-    
-    const tileX = Math.floor(clickX / tileSize);
-    const tileY = Math.floor(clickY / tileSize);
-    
-    // Convert viewport coordinates to board coordinates
-    const boardX = Math.floor(cameraX) + tileX;
-    const boardY = Math.floor(cameraY) + tileY;
-    
-    // Move cursor to clicked tile
-    if (boardX >= 0 && boardX < boardSize && boardY >= 0 && boardY < boardSize) {
-        cursorX = boardX;
-        cursorY = boardY;
-        updateCamera();
-        toggleTile(boardY, boardX);
-    }
-}
-
 // Handle keyboard input for cursor movement
 function handleKeyDown(event) {
     if (!isInGame) return;
@@ -443,7 +418,6 @@ function returnToLobby() {
     startGameListRefresh();
     
     // Remove event listeners
-    boardCanvas.removeEventListener('click', handleCanvasClick);
     document.removeEventListener('keydown', handleKeyDown);
     
     lobbyScreen.classList.remove('hidden');
